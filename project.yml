@@ -1,0 +1,32 @@
+name: Whatslol
+
+options:
+  postGenCommand: pod install --repo-update
+  indentWidth: 4
+  tabWidth: 4
+  xcodeVersion: 0800
+
+config:
+  debug: debug
+  release: release
+
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: 13
+
+targets:
+  
+  Whatslol:
+    type: application
+    platform: iOS
+
+    sources:
+      - path: Whatslol/
+
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: 1
+        DISPLAYNAME: Whatslol
+        INFOPLIST_FILE: Whatslol/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.helio.whatslol
+  
