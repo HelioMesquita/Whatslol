@@ -9,7 +9,6 @@ import UIKit
 
 class Message: Decodable {
     
-    
     let message: String
     let itsMe: Bool
     
