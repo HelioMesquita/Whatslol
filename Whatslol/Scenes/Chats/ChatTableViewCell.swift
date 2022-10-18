@@ -1,13 +1,14 @@
 //
-//  WhatsAppCellTableViewCell.swift
+//  ChatTableViewCell.swift
 //  fastLearning
 //
 //  Created by Luis Gustavo Fermino Moraes on 28/09/22.
 //
+
 import Kingfisher
 import UIKit
 
-class WhatsAppCellTableViewCell: UITableViewCell {
+class ChatTableViewCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var subtitleLabel: UILabel!
@@ -23,7 +24,7 @@ class WhatsAppCellTableViewCell: UITableViewCell {
         bulletView.clipsToBounds = true
     }
 
-    func setValues(chat: Chat){
+    func setValues(chat: ChatResponse){
         titleLabel.text = chat.name
         subtitleLabel.text = chat.lastMessage
         dateLabel.text = chat.lastMessageDate

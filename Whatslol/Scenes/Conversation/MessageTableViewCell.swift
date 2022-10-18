@@ -34,8 +34,6 @@ class MessageTableViewCell: UITableViewCell {
     
 }
 
-class LeftMessageTableViewCell: MessageTableViewCell {
-    }
+class LeftMessageTableViewCell: MessageTableViewCell {}
 
-class RightMessageTableViewCell: MessageTableViewCell {
-    }
+class RightMessageTableViewCell: MessageTableViewCell {}
