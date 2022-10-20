@@ -7,12 +7,19 @@
 
 import Foundation
 
-class NetworkService {
+protocol NetworkServiceProtocol {
+    func performRequest<X: Decodable>(url: URL,
+                                     responseModel: X.Type,
+                                     onSuccess: @escaping (X) -> Void,
+                                     onFailure: @escaping (Error) -> ())
+}
+
+class NetworkService: NetworkServiceProtocol {
     
-    static func performRequest<X: Decodable>(url: URL,
-                                             responseModel: X.Type,
-                                             onSuccess: @escaping (X) -> Void,
-                                             onFailure: @escaping (Error) -> ()
+    func performRequest<X: Decodable>(url: URL,
+                                     responseModel: X.Type,
+                                     onSuccess: @escaping (X) -> Void,
+                                     onFailure: @escaping (Error) -> ()
     ){
         let urlRequest = URLRequest(url: url)
         

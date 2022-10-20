@@ -21,7 +21,7 @@ class ConversationViewController: UITableViewController {
         
         let url = URL(string: "https://us-central1-whatslol-1460f.cloudfunctions.net/\(name.lowercased())")!
         
-        NetworkService.performRequest(url: url, responseModel: [MessageResponse].self) { response in
+        NetworkService().performRequest(url: url, responseModel: [MessageResponse].self) { response in
             self.messages = response
             self.tableView.reloadData()
         } onFailure: { _ in

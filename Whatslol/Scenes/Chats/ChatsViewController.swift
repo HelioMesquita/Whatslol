@@ -11,20 +11,13 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     @IBOutlet weak var tableView: UITableView!
     
-    var chats: [ChatResponse] = []
-    
+    lazy var viewModel = ChatsViewModel(delegate: self, network: NetworkService())
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
-        
-        let url = URL(string: "https://us-central1-whatslol-1460f.cloudfunctions.net/chat")!
-        NetworkService.performRequest(url: url, responseModel: [ChatResponse].self) { response in
-            self.chats = response
-            self.tableView.reloadData()
-        } onFailure: { _ in
-            self.tableView.reloadData()
-        }
+        viewModel.loadScreen()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -32,18 +25,18 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chats.count
+        return viewModel.numberOfRowsInSection()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "whatsappCell", for: indexPath) as! ChatTableViewCell
-        let chat = chats[indexPath.row]
+        let chat = viewModel.chatForIndexPath(indexPath: indexPath)
         cell.setValues(chat: chat)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let chat = chats[indexPath.row]
+        let chat = viewModel.chatForIndexPath(indexPath: indexPath)
         performSegue(withIdentifier: "showChat", sender: chat)
     }
     
@@ -54,6 +47,14 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }
             viewController.chat = chat
         }
+    }
+    
+}
+
+extension ChatsViewController: ChatsViewModelProtocol {
+    
+    func reloadData() {
+        self.tableView.reloadData()
     }
 
 }
