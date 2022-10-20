@@ -25,6 +25,7 @@ class ChatsViewModel {
     
     func loadScreen() {
         network.performRequest(url: url, responseModel: [ChatResponse].self) { response in
+            self.chats = response
             self.delegate?.reloadData()
         } onFailure: { _ in
             self.delegate?.reloadData()
