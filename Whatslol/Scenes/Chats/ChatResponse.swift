@@ -24,5 +24,21 @@ class ChatResponse: Decodable {
         case lastMessageDate = "dataUltimaMensagem"
         case profile = "perfil"
     }
+    
+    init(
+        profileImage: URL,
+        name: String,
+        lastMessage: String,
+        hasVisualized: Bool,
+        lastMessageDate: String,
+        profile: URL
+    ) {
+        self.profileImage = profileImage
+        self.name = name
+        self.lastMessage = lastMessage
+        self.hasVisualized = hasVisualized
+        self.lastMessageDate = lastMessageDate
+        self.profile = profile
+    }
 
 }

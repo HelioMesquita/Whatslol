@@ -29,4 +29,18 @@ targets:
         DISPLAYNAME: Whatslol
         INFOPLIST_FILE: Whatslol/Resources/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.helio.whatslol
+
+  WhatslolTests:
+    type: bundle.unit-test
+    platform: iOS 
+
+    sources:
+      - path: WhatslolTests/
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.helio.whatsloltests
+
+    dependencies:
+      - target: Whatslol
   

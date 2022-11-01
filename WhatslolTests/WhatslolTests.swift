@@ -6,30 +6,66 @@
 //
 
 import XCTest
+@testable import Whatslol
 
-class WhatslolTests: XCTestCase {
+class DummyViewController: ChatsViewModelProtocol {
+    
+    var isCalledReloadData = false
+    
+    func reloadData() {
+        isCalledReloadData = true
+    }
+    
+}
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+class MockNetworkService<X: Decodable>: NetworkServiceProtocol {
+    
+    var success: Bool = true
+    var mockedData: X
+    
+    init(mockedData: X) {
+        self.mockedData = mockedData
+    }
+    
+    func performRequest<X>(
+        url: URL, responseModel: X.Type,
+        onSuccess: @escaping (X) -> Void,
+        onFailure: @escaping (Error) -> ()) where X : Decodable {
+            if success {
+                onSuccess(mockedData as! X)
+            } else {
+                onFailure(NSError(domain: "fake error", code: 0, userInfo: nil))
+            }
+    }
+    
+}
+
+class ChatsViewModelTests: XCTestCase {
+    
+    var dummyViewController = DummyViewController()
+    let mockChats = [
+        ChatResponse(profileImage: URL(string: "www.google.com.br")!, name: "tanto faz", lastMessage: "tanto faz", hasVisualized: true, lastMessageDate: "tanto faz", profile: URL(string: "www.google.com.br")!)
+    ]
+    lazy var mockNetwork = MockNetworkService<[ChatResponse]>(mockedData: mockChats)
+    lazy var objectUnderTest = ChatsViewModel(delegate: dummyViewController, network: mockNetwork)
+    
+    
+    override func setUp() {
+        
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testLoadScreenOnSuccess() throws {
+        objectUnderTest.loadScreen()
+        XCTAssertEqual(objectUnderTest.numberOfRowsInSection(), 1)
+        XCTAssertTrue(dummyViewController.isCalledReloadData)
+        XCTAssertEqual(objectUnderTest.chatForIndexPath(indexPath: IndexPath(item: 0, section: 0)).name, "tanto faz")
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testLoadScreenOnFailure() throws {
+        mockNetwork.success = false
+        objectUnderTest.loadScreen()
+        XCTAssertEqual(objectUnderTest.numberOfRowsInSection(), 0)
+        XCTAssertTrue(dummyViewController.isCalledReloadData)
     }
 
 }
