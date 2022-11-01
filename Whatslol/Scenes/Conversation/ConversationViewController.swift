@@ -7,55 +7,34 @@
 
 import UIKit
 
-class ConversationViewController: UITableViewController {
+class ConversationViewController: UITableViewController, ConversationViewModelProtocol {
     
     var chat: ChatResponse?
-    var messages: [MessageResponse] = []
+    lazy var viewModel: ConversationViewModel = ConversationViewModel(delegate: self, name: chat?.name ?? "", network: NetworkService())
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .lightGray
-        
-        guard let name = chat?.name else{ return }
-        self.title = name
-        
-        let url = URL(string: "https://us-central1-whatslol-1460f.cloudfunctions.net/\(name.lowercased())")!
-        
-        NetworkService().performRequest(url: url, responseModel: [MessageResponse].self) { response in
-            self.messages = response
-            self.tableView.reloadData()
-        } onFailure: { _ in
-            self.tableView.reloadData()
-        }
-
+        self.title = chat?.name
+        viewModel.loadScreen()
     }
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
-        return messages.count
+        return viewModel.numberOfRowsInSection()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = messages[indexPath.row]
-        if message.itsMe {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "leftCell", for: indexPath) as? MessageTableViewCell else {
-                return UITableViewCell()
-            }
-            cell.messageLabel.text = message.message
-            return cell
-        } else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "rightCell", for: indexPath) as? MessageTableViewCell else {
-                return UITableViewCell()
-            }
-            cell.messageLabel.text = message.message
-            return cell
-        }
+        let message = viewModel.messageForIndexPath(indexPath: indexPath)
+        let identifier = viewModel.cellIdentifier(indexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MessageTableViewCell
+        cell?.messageLabel.text = message.message
+        return cell ?? UITableViewCell()
+    }
+    
+    func reloadData() {
+        tableView.reloadData()
     }
     
 }
